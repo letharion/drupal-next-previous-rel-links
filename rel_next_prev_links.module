@@ -4,7 +4,6 @@
  * Hook implementations and other non-optional functions for the module.
  *
  * @TODO Get rid of $base_url
- * @TODO Get rid of $_SERVER
  * @TODO Does rel_next_prev_links_set_page_in_url really need the full url?
  * @TODO Deal with multiple calls?
  */
@@ -16,7 +15,7 @@ function rel_next_prev_links_generate_head_links($config) {
   global $base_url;
 
   $last_item_viewed = ($config['current_page'] * $config['items_per_page']) + $config['items_per_page'];
-  $config['request_uri'] = $_SERVER['REQUEST_URI'];
+  $config['request_uri'] = request_uri();
   $config['base_url'] = $base_url;
 
   if ($config['current_page'] != 0) {
