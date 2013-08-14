@@ -1,0 +1,3 @@
+name = Rel next prev links
+description = API moduel for adding meta tags for next and previous rel links.
+core = 6.x

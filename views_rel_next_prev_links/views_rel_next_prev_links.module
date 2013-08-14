@@ -1,0 +1,23 @@
+<?php
+/**
+ * @file
+ * Hook implementations and other non-optional functions for the module.
+ */
+
+/**
+ * Implements hook_views_post_execute().
+ *
+ * Bridges the primary functionality of Rel next prev links with a View.
+ */
+function views_rel_next_prev_links_views_post_execute($view) {
+  if ($view->pager['use_pager'] !== '1') {
+    return;
+  }
+
+  $config = array(
+    'current_page' => $view->pager['current_page'],
+    'items_per_page' => $view->pager['items_per_page'],
+    'total_rows' => $view->total_rows,
+  );
+  rel_next_prev_links_generate_head_links($config);
+}

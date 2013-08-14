@@ -1,0 +1,77 @@
+<?php
+/**
+ * @file
+ * Hook implementations and other non-optional functions for the module.
+ *
+ * @TODO Get rid of $base_url
+ * @TODO Get rid of $_SERVER
+ * @TODO Does rel_next_prev_links_set_page_in_url really need the full url?
+ * @TODO Deal with multiple calls?
+ */
+
+/**
+ * Primary functionality of the module. Generate rel next/prev links.
+ */
+function rel_next_prev_links_generate_head_links($config) {
+  global $base_url;
+
+  $last_item_viewed = ($config['current_page'] * $config['items_per_page']) + $config['items_per_page'];
+  $config['request_uri'] = $_SERVER['REQUEST_URI'];
+  $config['base_url'] = $base_url;
+
+  if ($config['current_page'] != 0) {
+    $url = rel_next_prev_links_build_link_url($config, 'prev');
+    rel_next_prev_links_add_link($url, 'prev');
+  }
+
+  if ($config['total_rows'] > $last_item_viewed) {
+    $url = rel_next_prev_links_build_link_url($config, 'next');
+    rel_next_prev_links_add_link($url, 'next');
+  }
+}
+
+/**
+ * Build the full URL for a rel link.
+ */
+function rel_next_prev_links_build_link_url($config, $direction) {
+  global $base_url;
+
+  $page_step = ($config['current_page'] + ($direction === 'next' ? 1 : -1));
+
+  $path = rel_next_prev_links_set_page_in_url($config['request_uri'], $page_step, $config['current_page']);
+  $url = $base_url . $path;
+
+  return $url;
+}
+
+/**
+ * Perform final assembly of link and addition to <head>.
+ */
+function rel_next_prev_links_add_link($url, $direction) {
+  drupal_set_html_head('<link rel="' . $direction . '" href="' . $url . '" />');
+}
+
+/**
+ * Helper function to generate the page= part of the url.
+ */
+function rel_next_prev_links_set_page_in_url($url, $page, $current_page, $page_id = 'page') {
+  $page_id .= '=';
+
+  if ($current_page == 0) {
+    $url .= (strpos($url, '?') > 0) ? '&' : '?';
+    $url .= $page_id . $page;
+  }
+  else {
+    if ($page != 0) {
+      $url = str_replace($page_id . $current_page, $page_id . $page, $url);
+    }
+    else {
+      $url = str_replace($page_id . $current_page, '', $url);
+      if (substr($url, -1) === '?') {
+        $url = str_replace('?', '', $url);
+      }
+    }
+  }
+
+  return $url;
+}

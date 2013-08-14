@@ -1,0 +1,5 @@
+name = Views rel next prev
+description = Bridges Views and Rel next previous links by using Views as a data source.
+core = 6.x
+
+dependencies[] = rel_next_prev_links
